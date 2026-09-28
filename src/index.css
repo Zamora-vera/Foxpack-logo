@@ -126,7 +126,7 @@ body {
 
 .fp-cube-float {
   animation: fp-float 3.2s ease-in-out infinite;
-  transform-origin: 100px 100px;
+  transform-origin: 159px 160px;
 }
 
 .fp-diamond-pulse {

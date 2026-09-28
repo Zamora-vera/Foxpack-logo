@@ -1,4 +1,4 @@
-import { CubeLogo } from "./CubeLogo";
+import { FoxPackLogo } from "./FoxPackLogo";
 import { storeNameFor, storeUrlFor, type Platform } from "../lib/device";
 
 type DemoNoticeProps = {
@@ -11,7 +11,7 @@ export const DemoNotice = ({ platform, onReset }: DemoNoticeProps) => {
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center px-6 text-center">
-      <CubeLogo className="h-16 w-16" />
+      <FoxPackLogo variant="dark" className="h-[72px] w-[72px]" />
       <h1 className="mt-6 text-xl font-bold text-white">
         Aquí te llevaríamos a {storeNameFor(platform)}
       </h1>

@@ -89,7 +89,7 @@ export default function App() {
   return (
     <div className="relative min-h-screen overflow-hidden bg-[#08080a]">
       <div className="pointer-events-none absolute -top-40 left-1/2 h-[520px] w-[520px] -translate-x-1/2 rounded-full bg-[#F97316]/15 blur-[130px]" />
-      <div className="pointer-events-none absolute bottom-[-190px] right-[-120px] h-[420px] w-[420px] rounded-full bg-[#3FD35B]/10 blur-[130px]" />
+      <div className="pointer-events-none absolute bottom-[-190px] right-[-120px] h-[420px] w-[420px] rounded-full bg-[#8DC63F]/10 blur-[130px]" />
       <div className="relative">{content}</div>
     </div>
   );

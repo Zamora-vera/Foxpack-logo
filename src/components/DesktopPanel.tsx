@@ -1,11 +1,6 @@
-import { CubeLogo } from "./CubeLogo";
+import { FoxPackBrand } from "./FoxPackBrand";
 import { StoreCard } from "./StoreCard";
-import {
-  APP_STORE_URL,
-  PLAY_STORE_URL,
-  type Platform,
-  isInAppBrowser,
-} from "../lib/device";
+import { APP_STORE_URL, PLAY_STORE_URL, type Platform, isInAppBrowser } from "../lib/device";
 
 type DesktopPanelProps = {
   onDemo: (platform: Platform) => void;
@@ -14,12 +9,7 @@ type DesktopPanelProps = {
 
 export const DesktopPanel = ({ onDemo, autoPlatform }: DesktopPanelProps) => (
   <div className="flex min-h-screen flex-col items-center justify-center px-6 py-14">
-    <div className="mb-6 flex items-center gap-3">
-      <CubeLogo className="h-12 w-12 fp-cube-float" animated={false} />
-      <span className="text-xl font-bold tracking-tight text-white">
-        Fox<span className="text-[#F97316]">Pack</span>
-      </span>
-    </div>
+    <FoxPackBrand size={54} variant="dark" className="mb-8" />
 
     <h1 className="max-w-lg text-center text-3xl font-bold tracking-tight text-white sm:text-4xl">
       Descarga FoxPack en tu teléfono
@@ -42,7 +32,7 @@ export const DesktopPanel = ({ onDemo, autoPlatform }: DesktopPanelProps) => (
         name="Google Play"
         tagline="Android"
         url={PLAY_STORE_URL}
-        accent="#3FD35B"
+        accent="#8DC63F"
       />
     </div>
 
@@ -54,7 +44,7 @@ export const DesktopPanel = ({ onDemo, autoPlatform }: DesktopPanelProps) => (
 
     {isInAppBrowser() && (
       <p className="mt-4 max-w-md rounded-xl border border-amber-400/25 bg-amber-400/10 px-4 py-3 text-center text-xs text-amber-200">
-        Parece que estás dentro de una app (Instagram, Facebook, TikTok…). Si el enlace no abre la
+        Parece que estás dentro de otra app (Instagram, Facebook, TikTok…). Si el enlace no abre la
         tienda, toca el menú y elige <strong>“Abrir en el navegador”</strong>.
       </p>
     )}
