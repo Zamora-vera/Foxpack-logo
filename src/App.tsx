@@ -1,79 +1,96 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState, type ReactNode } from "react";
+import { LoadingScreen } from "./components/LoadingScreen";
+import { DesktopPanel } from "./components/DesktopPanel";
+import { DemoNotice } from "./components/DemoNotice";
+import {
+  detectPlatform,
+  readPlatformOverride,
+  storeNameFor,
+  storeUrlFor,
+  type Platform,
+} from "./lib/device";
 
-const phrases = [
-  "Dream it. Build it.",
-  "Ideas become reality here.",
-  "Your canvas awaits.",
-  "Let's create something amazing.",
-  "From zero to wow.",
-];
+const LOADER_MS = 5000;
+const TOTAL_SECONDS = LOADER_MS / 1000;
 
-function DoableLogo({ className = "" }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 40 40" fill="none" className={className}>
-      <rect width="40" height="40" rx="10" className="fill-[#F97316]">
-        <animate attributeName="rx" values="10;14;10" dur="3s" repeatCount="indefinite" />
-      </rect>
-      <text x="50%" y="54%" dominantBaseline="middle" textAnchor="middle" className="fill-white" style={{ fontSize: "22px", fontWeight: 700, fontFamily: "system-ui" }}>
-        M
-      </text>
-    </svg>
-  );
-}
+type Phase = "loading" | "redirecting" | "ready";
 
 export default function App() {
-  const [phraseIndex, setPhraseIndex] = useState(0);
-  const [opacity, setOpacity] = useState(1);
+  const [demo, setDemo] = useState<Platform | null>(null);
+  const [progress, setProgress] = useState(0);
+  const [phase, setPhase] = useState<Phase>("loading");
+
+  const [autoPlatform] = useState<Platform>(detectPlatform);
+  const [override] = useState<Platform | null>(readPlatformOverride);
+  const platform: Platform = demo ?? override ?? autoPlatform;
+  const isSimulation = demo !== null || override !== null;
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setOpacity(0);
-      setTimeout(() => {
-        setPhraseIndex((i) => (i + 1) % phrases.length);
-        setOpacity(1);
-      }, 400);
-    }, 3500);
-    return () => clearInterval(interval);
-  }, []);
+    setProgress(0);
+    setPhase("loading");
+
+    const start = performance.now();
+    let frame = 0;
+
+    const tick = (now: number) => {
+      const next = Math.min(1, (now - start) / LOADER_MS);
+      setProgress(next);
+      if (next < 1) {
+        frame = requestAnimationFrame(tick);
+      } else {
+        setPhase(platform === "desktop" ? "ready" : "redirecting");
+      }
+    };
+
+    frame = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(frame);
+  }, [platform]);
+
+  useEffect(() => {
+    if (phase !== "redirecting" || isSimulation) return;
+    const timer = window.setTimeout(() => {
+      window.location.replace(storeUrlFor(platform));
+    }, 700);
+    return () => window.clearTimeout(timer);
+  }, [phase, platform, isSimulation]);
+
+  const secondsLeft = Math.max(0, Math.ceil(TOTAL_SECONDS * (1 - progress)));
+
+  let content: ReactNode;
+
+  if (phase === "loading") {
+    content = (
+      <LoadingScreen
+        progress={progress}
+        secondsLeft={secondsLeft}
+        headline={
+          platform === "desktop"
+            ? "Preparando tu descarga…"
+            : `Abriendo FoxPack en ${storeNameFor(platform)}…`
+        }
+        target={platform === "desktop" ? "Cargando opciones" : `Destino: ${storeNameFor(platform)}`}
+      />
+    );
+  } else if (phase === "redirecting" && isSimulation) {
+    content = <DemoNotice platform={platform} onReset={() => setDemo(null)} />;
+  } else if (phase === "redirecting") {
+    content = (
+      <LoadingScreen
+        progress={1}
+        secondsLeft={0}
+        headline={`Abriendo ${storeNameFor(platform)}…`}
+        target={storeNameFor(platform)}
+      />
+    );
+  } else {
+    content = <DesktopPanel onDemo={setDemo} autoPlatform={autoPlatform} />;
+  }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-neutral-50 via-stone-100 to-white dark:from-neutral-950 dark:via-neutral-900 dark:to-neutral-950">
-      <div className="text-center space-y-6">
-        <div className="flex justify-center">
-          <DoableLogo className="w-16 h-16 drop-shadow-lg" />
-        </div>
-        <div className="space-y-2">
-          <h1 className="text-3xl font-bold tracking-tight text-neutral-900 dark:text-white">
-            Morf.Codes
-          </h1>
-          <p
-            className="text-lg text-[#F97316] font-medium transition-opacity duration-400"
-            style={{ opacity, transitionDuration: "400ms" }}
-          >
-            {phrases[phraseIndex]}
-          </p>
-        </div>
-
-        <div className="flex justify-center pt-2">
-          <div className="flex gap-1.5">
-            {[0, 1, 2].map((i) => (
-              <div
-                key={i}
-                className="w-1.5 h-1.5 rounded-full bg-[#F97316]"
-                style={{
-                  animation: `pulse 1.4s ease-in-out ${i * 0.2}s infinite`,
-                }}
-              />
-            ))}
-          </div>
-        </div>
-      </div>
-      <style>{`
-        @keyframes pulse {
-          0%, 80%, 100% { opacity: 0.3; transform: scale(0.8); }
-          40% { opacity: 1; transform: scale(1.2); }
-        }
-      `}</style>
+    <div className="relative min-h-screen overflow-hidden bg-[#08080a]">
+      <div className="pointer-events-none absolute -top-40 left-1/2 h-[520px] w-[520px] -translate-x-1/2 rounded-full bg-[#F97316]/15 blur-[130px]" />
+      <div className="pointer-events-none absolute bottom-[-190px] right-[-120px] h-[420px] w-[420px] rounded-full bg-[#3FD35B]/10 blur-[130px]" />
+      <div className="relative">{content}</div>
     </div>
   );
 }

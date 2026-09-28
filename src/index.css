@@ -1,7 +1,5 @@
 @import "tailwindcss";
 
-/* Class-based dark mode — Doable's editor toggles `<html class="dark">`
-   and the preview bridge mirrors that into this iframe. */
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
@@ -79,10 +77,70 @@
   border-color: var(--color-border);
 }
 
+html,
 body {
-  background-color: var(--color-background);
+  background-color: #08080a;
+}
+
+body {
   color: var(--color-foreground);
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+/* ── FoxPack loader animations ─────────────────────────────── */
+@keyframes fp-float {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-8px) rotate(-1.5deg);
+  }
+}
+
+@keyframes fp-diamond {
+  0%,
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  50% {
+    opacity: 0.55;
+    transform: translateY(-2px);
+  }
+}
+
+@keyframes fp-halo {
+  0%,
+  100% {
+    opacity: 0.45;
+    transform: scale(0.92);
+  }
+  50% {
+    opacity: 0.9;
+    transform: scale(1.06);
+  }
+}
+
+.fp-cube-float {
+  animation: fp-float 3.2s ease-in-out infinite;
+  transform-origin: 100px 100px;
+}
+
+.fp-diamond-pulse {
+  animation: fp-diamond 1.6s ease-in-out infinite;
+}
+
+.fp-halo {
+  animation: fp-halo 2.4s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fp-cube-float,
+  .fp-diamond-pulse,
+  .fp-halo {
+    animation: none;
+  }
 }

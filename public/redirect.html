@@ -1,0 +1,374 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#08080a" />
+    <title>FoxPack — Descarga la app</title>
+    <meta
+      name="description"
+      content="Descarga FoxPack para iPhone, iPad y Android. Te llevamos automáticamente a tu tienda."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { height: 100%; }
+      body {
+        background: #08080a;
+        color: #fff;
+        font-family: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+        -webkit-font-smoothing: antialiased;
+        min-height: 100vh;
+        padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom)
+          env(safe-area-inset-left);
+        overflow-x: hidden;
+      }
+      .glow {
+        position: fixed;
+        border-radius: 50%;
+        filter: blur(120px);
+        pointer-events: none;
+      }
+      .glow.orange { top: -180px; left: 50%; transform: translateX(-50%); width: 460px; height: 460px; background: rgba(249, 115, 22, 0.16); }
+      .glow.green { bottom: -200px; right: -140px; width: 380px; height: 380px; background: rgba(63, 211, 91, 0.12); }
+      .stage {
+        position: relative;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 40px 22px;
+        text-align: center;
+      }
+      .hidden { display: none !important; }
+
+      /* ── Loader ─────────────────────────────── */
+      .ringWrap { position: relative; width: 220px; height: 220px; }
+      .halo {
+        position: absolute; inset: 20px; border-radius: 50%;
+        background: rgba(249, 115, 22, 0.25); filter: blur(38px);
+        animation: halo 2.4s ease-in-out infinite;
+      }
+      .ring { position: absolute; inset: 0; transform: rotate(-90deg); }
+      .cubeWrap { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; }
+      .cube { width: 118px; height: 118px; filter: drop-shadow(0 18px 30px rgba(0, 0, 0, 0.55)); }
+      .cubeFloat { animation: floaty 3.2s ease-in-out infinite; transform-origin: 100px 100px; }
+      .diamond { animation: diamond 1.6s ease-in-out infinite; }
+      @keyframes floaty { 0%,100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-8px) rotate(-1.5deg); } }
+      @keyframes diamond { 0%,100% { opacity: 1; } 50% { opacity: 0.55; } }
+      @keyframes halo { 0%,100% { opacity: .45; transform: scale(.92); } 50% { opacity: .9; transform: scale(1.06); } }
+
+      .brand { margin-top: 34px; font-size: 26px; font-weight: 700; letter-spacing: -0.02em; }
+      .brand span { color: #f97316; }
+      .lead { margin-top: 10px; font-size: 14px; color: rgba(255, 255, 255, 0.55); max-width: 320px; }
+      .barWrap { margin-top: 30px; width: 100%; max-width: 280px; }
+      .track { height: 6px; border-radius: 999px; background: rgba(255, 255, 255, 0.1); overflow: hidden; }
+      .fill { height: 100%; width: 0%; border-radius: 999px; background: linear-gradient(90deg, #f97316, #3fd35b); transition: width .1s linear; }
+      .meta {
+        display: flex; justify-content: space-between; margin-top: 12px;
+        font-size: 12px; font-weight: 500; color: rgba(255, 255, 255, 0.45);
+      }
+      .manual { margin-top: 22px; font-size: 13px; }
+      .manual a { color: #fdba74; text-decoration: none; border-bottom: 1px solid rgba(253, 186, 116, 0.4); }
+
+      /* ── Desktop ────────────────────────────── */
+      .head { display: flex; align-items: center; gap: 12px; margin-bottom: 22px; }
+      .head svg { width: 46px; height: 46px; }
+      .headName { font-size: 20px; font-weight: 700; }
+      .headName span { color: #f97316; }
+      h1 { font-size: clamp(26px, 6vw, 36px); font-weight: 700; letter-spacing: -0.02em; max-width: 560px; }
+      .sub { margin-top: 12px; font-size: 15px; line-height: 1.6; color: rgba(255, 255, 255, 0.55); max-width: 460px; }
+      .grid { margin-top: 40px; display: grid; gap: 22px; width: 100%; max-width: 720px; grid-template-columns: 1fr; }
+      @media (min-width: 640px) { .grid { grid-template-columns: 1fr 1fr; } }
+      .card {
+        border: 1px solid rgba(255, 255, 255, 0.1); background: rgba(255, 255, 255, 0.03);
+        border-radius: 26px; padding: 28px 22px; display: flex; flex-direction: column;
+        align-items: center; gap: 16px; transition: transform .3s ease, background .3s ease;
+      }
+      .card:hover { transform: translateY(-5px); background: rgba(255, 255, 255, 0.06); }
+      .tag { display: flex; align-items: center; gap: 8px; font-size: 11px; font-weight: 600; letter-spacing: .18em; text-transform: uppercase; color: rgba(255, 255, 255, 0.5); }
+      .dot { width: 8px; height: 8px; border-radius: 50%; }
+      .qrBox { background: #fff; padding: 12px; border-radius: 18px; box-shadow: 0 0 40px -12px rgba(249, 115, 22, 0.5); }
+      .qrBox img { display: block; width: 148px; height: 148px; }
+      .store { font-size: 17px; font-weight: 600; }
+      .hint { font-size: 13px; color: rgba(255, 255, 255, 0.5); margin-top: 4px; }
+      .btn {
+        width: 100%; display: block; text-align: center; text-decoration: none; font-size: 14px; font-weight: 600;
+        color: #fff; padding: 13px 18px; border-radius: 14px; background: rgba(255, 255, 255, 0.06);
+        border: 1px solid rgba(255, 255, 255, 0.1); transition: background .2s ease;
+      }
+      .btn:hover { background: rgba(255, 255, 255, 0.12); }
+      .btn.ios { border-color: rgba(249, 115, 22, 0.35); }
+      .btn.android { border-color: rgba(63, 211, 91, 0.35); }
+      .note {
+        margin-top: 26px; max-width: 480px; font-size: 12.5px; line-height: 1.6;
+        color: #fdba74; border: 1px solid rgba(249, 115, 22, 0.3); background: rgba(249, 115, 22, 0.1);
+        padding: 12px 16px; border-radius: 14px;
+      }
+      .foot { margin-top: 34px; font-size: 12px; color: rgba(255, 255, 255, 0.3); }
+      @media (prefers-reduced-motion: reduce) { .cubeFloat, .diamond, .halo { animation: none; } }
+    </style>
+  </head>
+  <body>
+    <div class="glow orange"></div>
+    <div class="glow green"></div>
+
+    <!-- ══ PANTALLA DE CARGA (5 segundos) ══ -->
+    <main class="stage" id="loaderStage">
+      <div class="ringWrap">
+        <div class="halo"></div>
+        <svg class="ring" viewBox="0 0 200 200" aria-hidden="true">
+          <circle cx="100" cy="100" r="92" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="4" />
+          <circle
+            id="ringProgress"
+            cx="100"
+            cy="100"
+            r="92"
+            fill="none"
+            stroke="url(#ringGrad)"
+            stroke-width="4"
+            stroke-linecap="round"
+            stroke-dasharray="578.05"
+            stroke-dashoffset="578.05"
+          />
+          <defs>
+            <linearGradient id="ringGrad" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#F97316" />
+              <stop offset="55%" stop-color="#FB923C" />
+              <stop offset="100%" stop-color="#3FD35B" />
+            </linearGradient>
+          </defs>
+        </svg>
+        <div class="cubeWrap">
+          <svg class="cube cubeFloat" viewBox="0 0 200 200" role="img" aria-label="FoxPack">
+            <defs>
+              <linearGradient id="cTop" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stop-color="#2b2b31" /><stop offset="100%" stop-color="#141417" />
+              </linearGradient>
+              <linearGradient id="cLeft" x1="0" y1="0" x2="0.4" y2="1">
+                <stop offset="0%" stop-color="#26262b" /><stop offset="100%" stop-color="#121215" />
+              </linearGradient>
+              <linearGradient id="cRight" x1="1" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#33333a" /><stop offset="100%" stop-color="#1b1b1f" />
+              </linearGradient>
+              <linearGradient id="cGreen" x1="0" y1="0" x2="0.6" y2="1">
+                <stop offset="0%" stop-color="#5ee87a" /><stop offset="100%" stop-color="#2fbf4c" />
+              </linearGradient>
+            </defs>
+            <polygon points="100,28 172,64 100,100 28,64" fill="url(#cTop)" />
+            <polygon points="28,64 100,100 100,172 28,136" fill="url(#cLeft)" />
+            <polygon points="100,100 172,64 172,136 100,172" fill="url(#cRight)" />
+            <g fill="none" stroke="#000" stroke-width="2.5" stroke-linejoin="round" opacity="0.85">
+              <polygon points="100,28 172,64 100,100 28,64" />
+              <polygon points="28,64 100,100 100,172 28,136" />
+              <polygon points="100,100 172,64 172,136 100,172" />
+            </g>
+            <polygon class="diamond" points="100,37 137,64 100,91 63,64" fill="none" stroke="#F97316" stroke-width="8" />
+            <polygon points="43.84,84.88 59.68,92.8 59.68,120.16 84.16,132.4 84.16,148.24 43.84,128.08" fill="url(#cGreen)" />
+            <polygon points="112.96,106.48 159.04,129.52 159.04,118 112.96,94.96" fill="#0c0c0e" />
+            <polygon points="159.04,83.44 112.96,152.56 112.96,164.08 159.04,94.96" fill="#0c0c0e" />
+          </svg>
+        </div>
+      </div>
+
+      <div class="brand">Fox<span>Pack</span></div>
+      <p class="lead" id="loaderLead">Preparando tu descarga…</p>
+
+      <div class="barWrap">
+        <div class="track"><div class="fill" id="fillBar"></div></div>
+        <div class="meta">
+          <span id="percent">0%</span>
+          <span id="countdown">5s</span>
+        </div>
+      </div>
+
+      <p class="manual hidden" id="manualLink">
+        ¿No pasa nada? <a id="manualAnchor" href="#">Toca aquí para descargar la app</a>
+      </p>
+    </main>
+
+    <!-- ══ ESCRITORIO: QR + botones ══ -->
+    <main class="stage hidden" id="desktopStage">
+      <div class="head">
+        <svg viewBox="0 0 200 200" aria-hidden="true">
+          <polygon points="100,28 172,64 100,100 28,64" fill="#1c1c20" />
+          <polygon points="28,64 100,100 100,172 28,136" fill="#26262b" />
+          <polygon points="100,100 172,64 172,136 100,172" fill="#1b1b1f" />
+          <polygon points="100,37 137,64 100,91 63,64" fill="none" stroke="#F97316" stroke-width="8" />
+          <polygon points="43.84,84.88 59.68,92.8 59.68,120.16 84.16,132.4 84.16,148.24 43.84,128.08" fill="#3FD35B" />
+        </svg>
+        <span class="headName">Fox<span>Pack</span></span>
+      </div>
+
+      <h1>Descarga FoxPack en tu teléfono</h1>
+      <p class="sub">
+        Escanea el código QR con la cámara de tu dispositivo, o toca el botón de tu tienda para
+        descargar la app ahora mismo.
+      </p>
+
+      <div class="grid">
+        <div class="card">
+          <div class="tag"><span class="dot" style="background:#F97316"></span>iPhone · iPad</div>
+          <div class="qrBox">
+            <img
+              alt="Código QR para descargar FoxPack en el App Store"
+              src="https://api.qrserver.com/v1/create-qr-code/?size=280x280&margin=0&data=https%3A%2F%2Fapps.apple.com%2Fdo%2Fapp%2Ffoxpack%2Fid6502532570"
+              onerror="this.parentNode.style.display='none'"
+            />
+          </div>
+          <div>
+            <div class="store">App Store</div>
+            <div class="hint">Escanea con la cámara de tu iPhone</div>
+          </div>
+          <a class="btn ios" id="btnIos" href="#">Abrir en App Store</a>
+        </div>
+
+        <div class="card">
+          <div class="tag"><span class="dot" style="background:#3FD35B"></span>Android</div>
+          <div class="qrBox">
+            <img
+              alt="Código QR para descargar FoxPack en Google Play"
+              src="https://api.qrserver.com/v1/create-qr-code/?size=280x280&margin=0&data=https%3A%2F%2Fplay.google.com%2Fstore%2Fapps%2Fdetails%3Fid%3Dcom.jtejeda.FoxPack%26hl%3Des_DO"
+              onerror="this.parentNode.style.display='none'"
+            />
+          </div>
+          <div>
+            <div class="store">Google Play</div>
+            <div class="hint">Escanea con la cámara de tu Android</div>
+          </div>
+          <a class="btn android" id="btnAndroid" href="#">Abrir en Google Play</a>
+        </div>
+      </div>
+
+      <p class="note" id="webviewNote" style="display: none">
+        Parece que estás dentro de otra app (Instagram, Facebook, TikTok…). Si el enlace no abre la
+        tienda, toca el menú y elige <strong>“Abrir en el navegador”</strong>.
+      </p>
+
+      <p class="foot">FoxPack · <span id="year">2026</span></p>
+    </main>
+
+    <noscript>
+      <div class="stage">
+        <p class="sub">Descarga FoxPack:</p>
+        <p class="sub">
+          <a style="color: #fdba74" href="https://apps.apple.com/do/app/foxpack/id6502532570">App Store</a>
+          ·
+          <a style="color: #fdba74" href="https://play.google.com/store/apps/details?id=com.jtejeda.FoxPack&hl=es_DO">Google Play</a>
+        </p>
+      </div>
+    </noscript>
+
+    <script>
+      (function () {
+        var APP_STORE_URL = "https://apps.apple.com/do/app/foxpack/id6502532570";
+        var PLAY_STORE_URL =
+          "https://play.google.com/store/apps/details?id=com.jtejeda.FoxPack&hl=es_DO";
+        var LOADER_MS = 5000;
+        var TOTAL_SECONDS = LOADER_MS / 1000;
+        var CIRCUMFERENCE = 578.05;
+
+        /* ── 1. Detección del dispositivo ───────────────────── */
+        function detectPlatform() {
+          var ua = navigator.userAgent || "";
+          var maxTouch = navigator.maxTouchPoints || 0;
+          var isIPadOs = /Macintosh|Mac OS X/.test(ua) && maxTouch > 1;
+          var platform =
+            /iPad|iPhone|iPod/.test(ua) || isIPadOs
+              ? "ios"
+              : /Android/i.test(ua)
+                ? "android"
+                : "desktop";
+
+          var match = /[?&]os=(ios|android|desktop)/.exec(window.location.search);
+          if (match) platform = match[1];
+          return platform;
+        }
+
+        var platform = detectPlatform();
+        var targetUrl = platform === "ios" ? APP_STORE_URL : PLAY_STORE_URL;
+        var targetName = platform === "ios" ? "App Store" : "Google Play";
+
+        /* ── 2. Enlaces reales de la vista escritorio ───────── */
+        var btnIos = document.getElementById("btnIos");
+        var btnAndroid = document.getElementById("btnAndroid");
+        if (btnIos) btnIos.href = APP_STORE_URL;
+        if (btnAndroid) btnAndroid.href = PLAY_STORE_URL;
+        document.getElementById("year").textContent = String(new Date().getFullYear());
+
+        var inApp = /FBAN|FBAV|FB_IAB|Instagram|Line\/|WhatsApp|Twitter|Snapchat|TikTok|Pinterest/i.test(
+          navigator.userAgent || "",
+        );
+        if (inApp) document.getElementById("webviewNote").style.display = "block";
+
+        /* ── 3. Loader de 5 segundos ────────────────────────── */
+        var ring = document.getElementById("ringProgress");
+        var bar = document.getElementById("fillBar");
+        var percent = document.getElementById("percent");
+        var countdown = document.getElementById("countdown");
+        var lead = document.getElementById("loaderLead");
+
+        if (platform === "desktop") {
+          lead.textContent = "Preparando tu descarga…";
+        } else {
+          lead.textContent = "Abriendo FoxPack en " + targetName + "…";
+        }
+
+        var start = null;
+        var done = false;
+
+        function finish() {
+          done = true;
+          ring.setAttribute("stroke-dashoffset", "0");
+          bar.style.width = "100%";
+          percent.textContent = "100%";
+          countdown.textContent = "Listo";
+
+          if (platform === "desktop") {
+            document.getElementById("loaderStage").classList.add("hidden");
+            document.getElementById("desktopStage").classList.remove("hidden");
+            return;
+          }
+
+          // Redirección real a la tienda correspondiente.
+          lead.textContent = "Abriendo " + targetName + "…";
+          var anchor = document.getElementById("manualAnchor");
+          anchor.href = targetUrl;
+          document.getElementById("manualLink").classList.remove("hidden");
+          window.setTimeout(function () {
+            window.location.replace(targetUrl);
+          }, 300);
+        }
+
+        function step(now) {
+          if (start === null) start = now;
+          var p = Math.min(1, (now - start) / LOADER_MS);
+
+          ring.setAttribute("stroke-dashoffset", String(CIRCUMFERENCE * (1 - p)));
+          bar.style.width = Math.round(p * 100) + "%";
+          percent.textContent = Math.round(p * 100) + "%";
+          countdown.textContent = Math.max(0, Math.ceil(TOTAL_SECONDS * (1 - p))) + "s";
+
+          if (p < 1) {
+            window.requestAnimationFrame(step);
+          } else if (!done) {
+            finish();
+          }
+        }
+
+        window.requestAnimationFrame(step);
+
+        // Red de seguridad: si algo falla, nunca dejar al usuario atascado.
+        window.setTimeout(function () {
+          if (!done) finish();
+        }, LOADER_MS + 1500);
+      })();
+    </script>
+  </body>
+</html>
